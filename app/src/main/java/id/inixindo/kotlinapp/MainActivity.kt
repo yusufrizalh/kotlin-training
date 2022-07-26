@@ -1,5 +1,6 @@
 package id.inixindo.kotlinapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btnMinus.setOnClickListener(this)
         btnMultiply.setOnClickListener(this)
         btnDivide.setOnClickListener(this)
+        btnIntent.setOnClickListener(this)
     }
 
     override fun onClick(button: View?) {
@@ -37,8 +39,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 txtResult.text =
                     ((number1.toString().toDouble() / number2.toString().toDouble()).toString())
             }
+            R.id.btnIntent -> {
+                val nilai = txtTotalNilai.text.toString()
+                val intent = Intent(this, DisplayActivity::class.java)
+                with(intent) {
+                    putExtra("NILAI", nilai)
+                }
+                startActivity(intent)
+            }
         }
     }
+
+
 
     // ketika radiobutton atau checkbox dipilih maka otomatis mengakumulasikan nilai
     fun akumulasiNilai(view: View) {
@@ -61,7 +73,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             releaseFilm += 30.0
         }
 
-        txtTotalNilai.text = "Total: " + (genreFilm + releaseFilm)
+        txtTotalNilai.text = "Total: " + (genreFilm + releaseFilm).toString()
     }
 
 }
