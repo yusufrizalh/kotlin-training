@@ -1,6 +1,7 @@
 package id.inixindo.kotlinapp
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         NavigationItemModel(R.drawable.icon_home, "Home"),
         NavigationItemModel(R.drawable.icon_gallery, "Gallery"),
         NavigationItemModel(R.drawable.icon_settings, "Settings"),
+        NavigationItemModel(R.drawable.icon_product, "Products"),
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +67,11 @@ class MainActivity : AppCompatActivity() {
                         val settingsFragment = SettingsFragment()
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.activity_main_content_id, settingsFragment).commit()
+                    }
+                    3 -> {
+                        // membuka menu products
+                        val intent = Intent(this@MainActivity, ProductActivity::class.java)
+                        startActivity(intent)
                     }
                 }
 
