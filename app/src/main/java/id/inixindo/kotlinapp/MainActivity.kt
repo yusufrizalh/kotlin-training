@@ -1,79 +1,117 @@
 package id.inixindo.kotlinapp
 
-import android.content.Intent
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.Exception
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity() {
+
+    lateinit var drawerLayout: DrawerLayout
+    private lateinit var adapter: NavigationRVAdapter
+
+    private var items = arrayListOf(
+        NavigationItemModel(R.drawable.icon_home, "Home"),
+        NavigationItemModel(R.drawable.icon_gallery, "Gallery"),
+        NavigationItemModel(R.drawable.icon_settings, "Settings"),
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btnPlus.setOnClickListener(this)
-        btnMinus.setOnClickListener(this)
-        btnMultiply.setOnClickListener(this)
-        btnDivide.setOnClickListener(this)
-        btnIntent.setOnClickListener(this)
-    }
+        drawerLayout = findViewById(R.id.drawer_layout)
 
-    override fun onClick(button: View?) {
-        val number1 = editNumber1.text
-        val number2 = editNumber2.text
+        updateAdapter(0)    // halaman home dibuka pertama kali
 
-        when (button?.id) {
-            R.id.btnPlus -> {
-                txtResult.text =
-                    ((number1.toString().toDouble() + number2.toString().toDouble()).toString())
-            }
-            R.id.btnMinus -> {
-                txtResult.text =
-                    ((number1.toString().toDouble() - number2.toString().toDouble()).toString())
-            }
-            R.id.btnMultiply -> {
-                txtResult.text =
-                    ((number1.toString().toDouble() * number2.toString().toDouble()).toString())
-            }
-            R.id.btnDivide -> {
-                txtResult.text =
-                    ((number1.toString().toDouble() / number2.toString().toDouble()).toString())
-            }
-            R.id.btnIntent -> {
-                val nilai = txtTotalNilai.text.toString()
-                val intent = Intent(this, DisplayActivity::class.java)
-                with(intent) {
-                    putExtra("NILAI", nilai)
+        val homeFragment = HomeFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.activity_main_content_id, homeFragment).commit()
+
+        // memannggil toolbar
+        setSupportActionBar(activity_main_toolbar)
+
+        // memanggil recycler view
+        navigation_rv.layoutManager = LinearLayoutManager(this)
+        navigation_rv.setHasFixedSize(true)
+
+        // ketika salah satu menu dipilih
+        navigation_rv.addOnItemTouchListener(RecyclerTouchListener(this, object : ClickListener {
+            override fun onClick(view: View, position: Int) {
+                when (position) {
+                    0 -> {
+                        // membuka menu home
+                        val homeFragment = HomeFragment()
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.activity_main_content_id, homeFragment).commit()
+                    }
+                    1 -> {
+                        // membuka menu gallery
+                        val galleryFragment = GalleryFragment()
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.activity_main_content_id, galleryFragment).commit()
+                    }
+                    2 -> {
+                        // membuka menu settings
+                        val settingsFragment = SettingsFragment()
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.activity_main_content_id, settingsFragment).commit()
+                    }
                 }
-                startActivity(intent)
+
+                updateAdapter(position)
+
+                Handler().postDelayed({
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                }, 200)
             }
-        }
+
+        }))
+
+        val toggle: ActionBarDrawerToggle =
+            object : ActionBarDrawerToggle(
+                this, drawerLayout, activity_main_toolbar,
+                R.string.open_drawer, R.string.close_drawer
+            ) {
+                override fun onDrawerOpened(drawerView: View) {
+                    super.onDrawerOpened(drawerView)
+                    try {
+                        val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        manager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+                    } catch (e: Exception){
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onDrawerClosed(drawerView: View) {
+                    super.onDrawerClosed(drawerView)
+                    try {
+                        val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        manager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+                    } catch (e: Exception){
+                        e.printStackTrace()
+                    }
+                }
+            }
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        navigation_header_img.setImageResource(R.mipmap.icon_app)
+        navigation_layout.setBackgroundColor(ContextCompat.getColor(this, R.color.teal_700))
     }
 
-
-
-    // ketika radiobutton atau checkbox dipilih maka otomatis mengakumulasikan nilai
-    fun akumulasiNilai(view: View) {
-        var genreFilm = 0.0
-        var releaseFilm = 0.0
-
-        when {
-            radioAction.isChecked -> genreFilm = 12.0
-            radioRomantic.isChecked -> genreFilm = 10.0
-            radioDrama.isChecked -> genreFilm = 7.0
-        }
-
-        if (check1.isChecked) {
-            releaseFilm += 10.0
-        }
-        if (check2.isChecked) {
-            releaseFilm += 20.0
-        }
-        if (check3.isChecked) {
-            releaseFilm += 30.0
-        }
-
-        txtTotalNilai.text = "Total: " + (genreFilm + releaseFilm).toString()
+    private fun updateAdapter(position: Int) {
+        adapter = NavigationRVAdapter(items, position)
+        navigation_rv.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
-
 }
