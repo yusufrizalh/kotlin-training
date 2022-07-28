@@ -38,11 +38,22 @@ class ProductActivity : AppCompatActivity() {
 
     private fun setupCourseLists() {
         listCourses = findViewById(R.id.listCourses)
-        courseAdapter = CourseAdapter(arrayListOf())
+        courseAdapter = CourseAdapter(arrayListOf(), object : CourseAdapter.OnAdapterListener {
+            override fun onClick(course: CourseModel.Data) {
+                startActivity(
+                    Intent(this@ProductActivity, EditActivity::class.java)
+                        /*.putExtra("courseName", course.name)
+                        .putExtra("coursePrice", course.price)
+                        .putExtra("courseDuration", course.duration)
+                        .putExtra("courseDescription", course.description)*/
+                        .putExtra("course", course)
+                )
+            }
+        })
         listCourses.adapter = courseAdapter
     }
 
-    private fun getCourses(){
+    private fun getCourses() {
         api.courses().enqueue(object : Callback<CourseModel> {
             override fun onResponse(call: Call<CourseModel>, response: Response<CourseModel>) {
                 if (response.isSuccessful) {
@@ -53,6 +64,7 @@ class ProductActivity : AppCompatActivity() {
                     courseAdapter.setData(listCourses)
                 }
             }
+
             override fun onFailure(call: Call<CourseModel>, t: Throwable) {
                 Log.e("ProductActivity", t.toString())
             }

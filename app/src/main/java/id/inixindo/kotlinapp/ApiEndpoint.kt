@@ -18,4 +18,15 @@ interface ApiEndpoint {
         @Field("duration") duration: String,
         @Field("description") description: String
     ): Call<CreateModel>
+
+    @FormUrlEncoded
+    @POST("update.php")
+    fun update(
+        @Field("id") id: String,
+        @Field("name") name: String,
+        @Field("price") price: String,
+        @Field("duration") duration: String,
+        @Field("description") description: String
+    ): Call<CreateModel>
+
 }

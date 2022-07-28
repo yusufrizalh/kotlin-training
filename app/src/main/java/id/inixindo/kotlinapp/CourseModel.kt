@@ -1,5 +1,7 @@
 package id.inixindo.kotlinapp
 
+import java.io.Serializable
+
 data class CourseModel(
     val courses: List<Data>
 ) {
@@ -10,5 +12,5 @@ data class CourseModel(
         val duration: String?,
         val description: String?,
         val created_at: String?
-    )
+    ): Serializable
 }

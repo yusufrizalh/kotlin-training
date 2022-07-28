@@ -45,8 +45,8 @@
         android:minHeight="50dp" />
 
     <Button
-        android:id="@+id/btn_create"
-        android:text="Create Course"
+        android:id="@+id/btn_update"
+        android:text="Update Course"
         app:cornerRadius="50dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

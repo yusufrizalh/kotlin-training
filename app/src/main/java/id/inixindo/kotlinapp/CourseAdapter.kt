@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.ArrayList
 
 class CourseAdapter(
-    val courses: ArrayList<CourseModel.Data>
+    val courses: ArrayList<CourseModel.Data>,
+    val listener: OnAdapterListener
 ): RecyclerView.Adapter<CourseAdapter.ViewHolder>() {
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -24,6 +25,9 @@ class CourseAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = courses[position]
         holder.textCourseName.text = data.name
+        holder.itemView.setOnClickListener {
+            listener.onClick(data)
+        }
     }
 
     override fun getItemCount() = courses.size
@@ -32,6 +36,10 @@ class CourseAdapter(
         courses.clear()
         courses.addAll(data)
         notifyDataSetChanged()
+    }
+
+    interface OnAdapterListener {
+        fun onClick(course: CourseModel.Data)
     }
 
 }
