@@ -1,5 +1,6 @@
 package id.inixindo.kotlinapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -25,9 +26,9 @@ class ProductActivity : AppCompatActivity() {
     }
 
     private fun setupListener() {
-//        fabCreate.setOnClickListener {
-//
-//        }
+        fabCreate.setOnClickListener {
+            startActivity(Intent(this, CreateActivity::class.java))
+        }
     }
 
     private fun setupViews() {
