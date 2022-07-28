@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import retrofit2.Call
@@ -48,6 +49,25 @@ class ProductActivity : AppCompatActivity() {
                         .putExtra("courseDescription", course.description)*/
                         .putExtra("course", course)
                 )
+            }
+
+            override fun onDelete(course: CourseModel.Data) {
+                api.delete(course.id!!).enqueue(object : Callback<CreateModel> {
+                    override fun onResponse(
+                        call: Call<CreateModel>,
+                        response: Response<CreateModel>
+                    ) {
+                        if (response.isSuccessful) {
+                            val update = response.body()
+                            Toast.makeText(applicationContext, update!!.message, Toast.LENGTH_LONG)
+                                .show()
+                            getCourses()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CreateModel>, t: Throwable) {}
+
+                })
             }
         })
         listCourses.adapter = courseAdapter

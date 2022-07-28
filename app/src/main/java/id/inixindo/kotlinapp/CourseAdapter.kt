@@ -28,6 +28,9 @@ class CourseAdapter(
         holder.itemView.setOnClickListener {
             listener.onClick(data)
         }
+        holder.imageDelete.setOnClickListener {
+            listener.onDelete(data)
+        }
     }
 
     override fun getItemCount() = courses.size
@@ -40,6 +43,7 @@ class CourseAdapter(
 
     interface OnAdapterListener {
         fun onClick(course: CourseModel.Data)
+        fun onDelete(course: CourseModel.Data)
     }
 
 }

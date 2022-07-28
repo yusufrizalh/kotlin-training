@@ -29,4 +29,10 @@ interface ApiEndpoint {
         @Field("description") description: String
     ): Call<CreateModel>
 
+    @FormUrlEncoded
+    @POST("delete.php")
+    fun delete(
+        @Field("id") id: String
+    ): Call<CreateModel>
+
 }
